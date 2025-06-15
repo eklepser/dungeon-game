@@ -9,6 +9,9 @@ using Venefica.Logic.Graphics;
 using Venefica.Logic.Physics;
 using Venefica.Logic.World;
 using Venefica.Logic.Base.Tools;
+using Venefica.Logic.Base.Entities;
+using Venefica.Logic.Base.Weapons;
+using Venefica.Logic.Base.Items;
 
 namespace Venefica;
     
@@ -25,14 +28,15 @@ public class Venefica : Game
 
     private Camera _camera;
     private ControlManager _controlManager;
-    private CollisionManager _collisionManager;
     private LevelGenerator _levelGenerator;
 
     private FrameCounter _frameCounter = new FrameCounter();
     float FPS;
     float deltaTime;
 
+    Entity kele;
     Player lulu;
+    Projectile proj;
     SpriteFont arial14;
     string debugText;
 
@@ -47,18 +51,32 @@ public class Venefica : Game
 
     protected override void Initialize()
     {
+        AnimationManager.LoadAllAnimationSets();
+        EntityManager.LoadAllTemplates(Content);
+        ItemManager.LoadAllStaffTemplates(Content);
+
+        Staff staff = (Staff)ItemManager.Create("red_staff");
+
         InitGraphics(new Vector2(Constants.ScreenWidth, Constants.ScreenHeight));
-
-        Sprite luluSprite = new("player", Content);
-        lulu = new Player(luluSprite, new Vector2(100, 100), 100);
-        lulu.AnimationManager.LoadAllAnimations("player");
-
         arial14 = Content.Load<SpriteFont>("Arial14");
-       
+
+        lulu = (Player)EntityManager.Create(new Vector2(100, 100), "player");
+        lulu.Inventory.Add(staff);
+        _objectsForDraw.Add(lulu);
+        _objectsForUpdate.Add(lulu);
+
+        kele = EntityManager.Create(new Vector2(100, 100), "skeleton");
+        _objectsForDraw.Add(kele);
+        _objectsForUpdate.Add(kele);
+
+        Sprite projSprite = new("projectile1", Content);
+        projSprite.TextureSize = 10;
+        proj = new Projectile(projSprite, new Vector2(100, 200), 101, lulu);
+        _objectsForDraw.Add(proj);
+        _objectsForUpdate.Add(proj);
 
         _levelGenerator = new("tileset1", Content);
         _rooms = _levelGenerator.Generate(20);
-
         foreach (Room room in _rooms)
         {
             room.Create();
@@ -67,10 +85,7 @@ public class Venefica : Game
         }         
 
         _camera = new(lulu);
-        _collisionManager = new();
-        _controlManager = new(lulu);
-        _objectsForDraw.Add(lulu);
-        _objectsForUpdate.Add(lulu);
+        _controlManager = new(lulu, Content, _objectsForUpdate, _objectsForDraw);
 
         base.Initialize();
     }
@@ -83,27 +98,42 @@ public class Venefica : Game
     protected override void Update(GameTime gameTime)
     {
         _controlManager.Update(_camera);
-        _camera.Update(new Vector2(Constants.ScreenWidth, Constants.ScreenHeight), lulu);
 
+        string inv = "";
+        foreach (var item in lulu.Inventory)
+        {
+            if (item is Staff staff)
+            inv += staff.Name + " " + staff.Projectile.MaxHealth + "\n";
+        }
         debugText = $"FPS: {FPS}\nStaticObjects: {_objectsForDraw.Count()}\nCollisions: {_objectsForUpdate.Count()}"
             + $"\n\nPositionPixel: {lulu.PositionPixels}\nPositionWorld: {lulu.PositionWorld}"
             + $"\nCursorPosition: {_camera.GetCursorePosition()} \nFOV: {_camera.FOV}"
-            + $"\n\nVelocity {new Vector2((float)Math.Round(lulu.Velocity.X, 3), (float)Math.Round(lulu.Velocity.Y, 3))}";
+            + $"\n\nVelocity {new Vector2((float)Math.Round(lulu.Velocity.X, 3), (float)Math.Round(lulu.Velocity.Y, 3))}"
+            + $"\nInventory ({lulu.Inventory.Count}): " + inv;
+
+        for (int i = 0; i < _objectsForUpdate.Count; i++)
+        {
+            var obj = _objectsForUpdate[i];
+            if (obj is not Obstacle)
+            {
+                obj.Update(gameTime);
+                if (obj.IsDead)
+                {
+                    _objectsForUpdate.RemoveAt(i);
+                    _objectsForDraw.Remove(obj);
+                    i--;
+                }
+            }
+        }
 
         _fovObjectsForDraw.Clear();
         foreach (var obj in _objectsForDraw)
         {
             if (obj.RectDst.Intersects(_camera.FOV)) _fovObjectsForDraw.Add(obj);
         }
-        foreach (var obj in _objectsForUpdate)
-        {
-            if (obj.AnimationManager != null) obj.AnimationManager.Update(gameTime);
-        }
 
-        _collisionManager.Update(deltaTime, _objectsForUpdate);
-
-        if (lulu.Velocity.Length() > 0) lulu.AnimationManager.Play(lulu.AnimationManager.Animations["Walk"]);
-        else lulu.AnimationManager.Play(lulu.AnimationManager.Animations["Idle"]);
+        CollisionManager.Update(deltaTime, gameTime, _objectsForUpdate);
+        _camera.Update(new Vector2(Constants.ScreenWidth, Constants.ScreenHeight), lulu);
 
         base.Update(gameTime);
     }

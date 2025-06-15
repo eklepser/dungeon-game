@@ -9,12 +9,13 @@ internal class Sprite
 {
     public Vector2 PosTileMap { get; set; }
     public readonly Texture2D Texture;
+    public int TextureSize { get; set; } = Constants.TileSizeSrc;
     public Rectangle RectSrc
     {
-        get => new((int)PosTileMap.X * Constants.TileSizeSrc,
-                   (int)PosTileMap.Y * Constants.TileSizeSrc,
-                   Constants.TileSizeSrc,
-                   Constants.TileSizeSrc);
+        get => new((int)PosTileMap.X * TextureSize,
+                   (int)PosTileMap.Y * TextureSize,
+                   TextureSize,
+                   TextureSize);
     }
 
     // constructor for room's tilemaps

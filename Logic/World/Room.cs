@@ -203,6 +203,7 @@ internal class Room
         ForeGround.Remove(tilePosition);
         Collisions.Remove(tilePosition);
     }
+
     private void ReplaceTile(Vector2 tilePosition)
     {
         MidGround.Remove(tilePosition);

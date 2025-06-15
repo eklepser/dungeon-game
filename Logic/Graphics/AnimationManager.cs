@@ -1,95 +1,77 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using Venefica.Logic.Base;
 
 namespace Venefica.Logic.Graphics;
 
-internal class AnimationManager
+internal static class AnimationManager
 {
-    private static string _folderPath = "../../../Animations/";
-    private Animation _currentAnimation;
-    private float _timeElapsed;
-    private int _currentFrameIndex;
-    private GameObjectCollidable _target;
-    public Dictionary<string, Animation> Animations { get; } = new();
+    private const string _folderPath = "../../../Animations";
+    private static Dictionary<string, Dictionary<string, Animation>> _allAnimationSets = new();
 
-    public AnimationManager(GameObjectCollidable target)
+    public static Dictionary<string, Animation> GetAnimationSet(string animationSetName)
     {
-        _target = target;
+        return _allAnimationSets[animationSetName];
     }
 
-    public Vector2 CurrentFrame => _currentAnimation?.Frames[_currentFrameIndex] ?? Vector2.Zero;
-
-    public void Play(Animation animation)
+    public static void LoadAllAnimationSets()
     {
-        if (_currentAnimation != animation)
+        foreach (var filePath in Directory.GetFiles(_folderPath, $"*.json"))
         {
-            _currentAnimation = animation;
-            _currentFrameIndex = 0;
-            _timeElapsed = 0f;
+            var animationSet = LoadAnimationSet(filePath);
+            var animationSetName = Path.GetFileNameWithoutExtension(filePath);
+            if (!_allAnimationSets.ContainsKey(animationSetName))
+                _allAnimationSets.Add(animationSetName, animationSet);
         }
     }
 
-    public void Update(GameTime gameTime)
-    {
-        if (_currentAnimation == null || _currentAnimation.Frames.Count == 0)
-            return;
-
-        _timeElapsed += (float)gameTime.ElapsedGameTime.TotalSeconds;
-
-        if (_timeElapsed >= _currentAnimation.FrameDuration)
-        {
-            _currentFrameIndex++;
-            _timeElapsed = 0f;
-
-            if (_currentFrameIndex >= _currentAnimation.Frames.Count)
-            {
-                if (_currentAnimation.IsLooped)
-                    _currentFrameIndex = 0;
-                else
-                    _currentFrameIndex = _currentAnimation.Frames.Count - 1;
-            }
-            _target.Sprite.PosTileMap = _currentAnimation.Frames[_currentFrameIndex];
-        }
-    }
-
-    public void LoadAllAnimations(string prefix)
-    {
-        foreach (var filePath in Directory.GetFiles(_folderPath, $"{prefix}*.json"))
-        {
-            var animation = LoadAnimation(filePath);
-            Animations.Add(animation.Name, animation);
-        }
-    }
-
-    private Animation LoadAnimation(string fileName)
+    private static Dictionary<string, Animation> LoadAnimationSet(string fileName)
     {
         if (!File.Exists(fileName))
-            throw new FileNotFoundException($"Animation file not found: {fileName}");
+            throw new FileNotFoundException($"Entity template file not found: {fileName}");
 
         string jsonText = File.ReadAllText(fileName);
-        JObject jsonData = JObject.Parse(jsonText);
+        var jsonData = JObject.Parse(jsonText);
 
-        Animation animation = new();
+        var animationSet = new Dictionary<string, Animation>();
 
-        // Читаем параметры
-        animation.Name = (string)jsonData["name"];
-        animation.FrameDuration = (float)jsonData["frameDuration"]!.ToObject<double>();
-        animation.IsLooped = (bool)jsonData["isLooped"];     
+        // Получаем секцию "animations"
+        var animationsToken = jsonData["animations"];
+        if (animationsToken == null)
+            throw new InvalidOperationException("No 'animations' section in JSON");
 
-        // Читаем кадры
-        foreach (var frameToken in jsonData["frames"]!)
+        // Обходим каждую анимацию внутри "animations"
+        foreach (var token in animationsToken.Children<JProperty>())
         {
-            int x = (int)frameToken["x"]!;
-            int y = (int)frameToken["y"]!;
+            string animationKey = token.Name;
+            var animationJson = token.Value as JObject;
 
-            animation.Frames.Add(new Vector2(x, y));
+            if (animationJson == null)
+                continue;
+
+            var animation = new Animation
+            {
+                Name = animationKey,
+                FrameDuration = (float)animationJson["frameDuration"]!.ToObject<double>(),
+                IsLooped = (bool)(animationJson["isLooped"] ?? true),
+                Frames = new List<Vector2>()
+            };
+
+            // Загружаем кадры
+            var framesToken = animationJson["frames"];
+            if (framesToken is JArray framesArray)
+            {
+                foreach (var frameToken in framesArray)
+                {
+                    int x = (int)frameToken["x"]!;
+                    int y = (int)frameToken["y"]!;
+                    animation.Frames.Add(new Vector2(x, y));
+                }
+            }
+            animationSet.Add(animationKey, animation);
         }
-        return animation;
+        return animationSet;
     }
 }

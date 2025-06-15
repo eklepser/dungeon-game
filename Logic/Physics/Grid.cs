@@ -1,10 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Venefica.Logic.Base;
 
 namespace Venefica.Logic.Physics;
@@ -26,7 +22,7 @@ internal class Grid
 
     public void Add(GameObjectCollidable obj)
     {
-        Rectangle rect = obj.RectHitBox;
+        Rectangle rect = obj.RectHitBoxBig;
 
         // Получаем координаты ячеек, которые занимает объект
         int startX = rect.X / cellSize;
@@ -49,7 +45,7 @@ internal class Grid
 
     public List<GameObjectCollidable> GetNearby(GameObjectCollidable obj)
     {
-        Rectangle rect = obj.RectHitBox;
+        Rectangle rect = obj.RectHitBoxBig;
         List<GameObjectCollidable> result = new();
 
         int startX = rect.X / cellSize;

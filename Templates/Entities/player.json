@@ -1,0 +1,13 @@
+{
+  "Name": "player",
+  "Type": "player",
+  "MaxHealth": 20,
+  "MoveSpeed": 1.0,
+  "AttackSpeed": 1.0,
+  "Damage": 10,
+  "DamageOnTouch": 1,
+  "WeaponName": "red_staff",
+  "BaseAgressionLevel": 1,
+  "XpReward": 10,
+  "SpriteName": "player"
+}

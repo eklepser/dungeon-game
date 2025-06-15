@@ -7,8 +7,8 @@ namespace Venefica.Logic.Graphics;
 
 internal class Animation
 {
-    public List<Vector2> Frames { get; set; } = new();
-    public float FrameDuration { get; set; } // время одного кадра в секундах
-    public bool IsLooped { get; set; }
     public string Name { get; set; }
+    public List<Vector2> Frames { get; set; } = new();
+    public float FrameDuration { get; set; }
+    public bool IsLooped { get; set; } 
 }

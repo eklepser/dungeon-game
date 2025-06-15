@@ -1,0 +1,12 @@
+{
+  "Name": "red_staff",
+  "Type": "magic_staff",
+  "AttackSpeed": 1.0,
+  "SpriteName":  "",
+  "Projectile": {
+    "MoveSpeed": 0.2,
+    "MaxHealth": 3,
+    "DamageOnTouch": 1,
+    "SpriteName": "projectile1"
+  }
+}
