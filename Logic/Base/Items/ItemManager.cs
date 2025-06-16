@@ -25,7 +25,8 @@ internal static class ItemManager
 
         return staffName switch
         {
-            "red_staff" => new RedStaff(template),    
+            "red_staff" => new RedStaff(template),
+            "blue_staff" => new BlueStaff(template),
             _ => throw new NotImplementedException($"No enemy class implemented for type '{staffName}'")
         };
     }

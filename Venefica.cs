@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using MonoGameGum;
 using System.Collections.Generic;
 using System.Linq;
 using System;
@@ -12,6 +13,12 @@ using Venefica.Logic.Base.Tools;
 using Venefica.Logic.Base.Entities;
 using Venefica.Logic.Base.Weapons;
 using Venefica.Logic.Base.Items;
+using Venefica.Logic.UserInterface;
+using MonoGameGum.Forms;
+using MonoGameGum.Forms.Controls.Primitives;
+using MonoGameGum.Forms.DefaultVisuals;
+using MonoGameGum.Forms.DefaultFromFileVisuals;
+using MonoGameGum.Input;
 
 namespace Venefica;
     
@@ -20,6 +27,8 @@ public class Venefica : Game
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
 
+    GumService Gum => GumService.Default;
+
     private List<GameObject> _objectsForDraw = new();
     private List<GameObject> _fovObjectsForDraw = new();
     private List<GameObjectCollidable> _objectsForUpdate = new();
@@ -27,7 +36,6 @@ public class Venefica : Game
     private List<Room> _rooms = new();
 
     private Camera _camera;
-    private ControlManager _controlManager;
     private LevelGenerator _levelGenerator;
 
     private FrameCounter _frameCounter = new FrameCounter();
@@ -51,19 +59,32 @@ public class Venefica : Game
 
     protected override void Initialize()
     {
+        Gum.Initialize(this);
+        //PauseMenuUI.CreatePauseMenu(Gum);
+
         AnimationManager.LoadAllAnimationSets();
         EntityManager.LoadAllTemplates(Content);
         ItemManager.LoadAllStaffTemplates(Content);
+       
 
-        Staff staff = (Staff)ItemManager.Create("red_staff");
+        Staff redStaff = (Staff)ItemManager.Create("red_staff");
+        Staff blueStaff = (Staff)ItemManager.Create("blue_staff");
+        Staff redStaff1 = (Staff)ItemManager.Create("red_staff");
+        Staff blueStaff1 = (Staff)ItemManager.Create("blue_staff");
 
         InitGraphics(new Vector2(Constants.ScreenWidth, Constants.ScreenHeight));
         arial14 = Content.Load<SpriteFont>("Arial14");
 
         lulu = (Player)EntityManager.Create(new Vector2(100, 100), "player");
-        lulu.Inventory.Add(staff);
+        lulu.Inventory.Hands[0] = redStaff;
+        lulu.Inventory.Hands[1] = blueStaff;
+        lulu.Inventory.Backpack[1] = blueStaff1;
+        lulu.Inventory.Backpack[2] = redStaff1;
         _objectsForDraw.Add(lulu);
         _objectsForUpdate.Add(lulu);
+
+        ControlManager.Initialize(lulu, Content, _objectsForUpdate, _objectsForDraw);
+        UserInterfaceManager.LoadAllUserInterfaceObjects(Content, Gum, lulu);
 
         kele = EntityManager.Create(new Vector2(100, 100), "skeleton");
         _objectsForDraw.Add(kele);
@@ -85,7 +106,6 @@ public class Venefica : Game
         }         
 
         _camera = new(lulu);
-        _controlManager = new(lulu, Content, _objectsForUpdate, _objectsForDraw);
 
         base.Initialize();
     }
@@ -97,30 +117,32 @@ public class Venefica : Game
 
     protected override void Update(GameTime gameTime)
     {
-        _controlManager.Update(_camera);
+        ControlManager.Update(_camera, gameTime);
 
-        string inv = "";
-        foreach (var item in lulu.Inventory)
+        string inv = "\n";
+        foreach (var item in lulu.Inventory.Hands)
         {
             if (item is Staff staff)
-            inv += staff.Name + " " + staff.Projectile.MaxHealth + "\n";
+            inv += staff.Name + "   " + staff.Projectile.SpriteName + "\n";
         }
-        debugText = $"FPS: {FPS}\nStaticObjects: {_objectsForDraw.Count()}\nCollisions: {_objectsForUpdate.Count()}"
-            + $"\n\nPositionPixel: {lulu.PositionPixels}\nPositionWorld: {lulu.PositionWorld}"
-            + $"\nCursorPosition: {_camera.GetCursorePosition()} \nFOV: {_camera.FOV}"
-            + $"\n\nVelocity {new Vector2((float)Math.Round(lulu.Velocity.X, 3), (float)Math.Round(lulu.Velocity.Y, 3))}"
-            + $"\nInventory ({lulu.Inventory.Count}): " + inv;
 
+        //debugText = $"FPS: {FPS}\nStaticObjects: {_objectsForDraw.Count()}\nCollisions: {_objectsForUpdate.Count()}"
+        //    + $"\n\nPositionPixel: {lulu.PositionPixels}\nPositionWorld: {lulu.PositionWorld}"
+        //    + $"\nCursorPosition: {_camera.GetCursorePositionWorld()} \nFOV: {_camera.FOV}"
+        //    + $"\n\nVelocity {new Vector2((float)Math.Round(lulu.Velocity.X, 3), (float)Math.Round(lulu.Velocity.Y, 3))}"
+        //    + $"\nInventory: " + inv;
+
+        debugText = $"FPS: {FPS}";
         for (int i = 0; i < _objectsForUpdate.Count; i++)
         {
             var obj = _objectsForUpdate[i];
-            if (obj is not Obstacle)
+            if (obj is GameObjectDynamic dynamicObj)
             {
-                obj.Update(gameTime);
-                if (obj.IsDead)
+                dynamicObj.Update(gameTime);
+                if (dynamicObj.IsDead)
                 {
                     _objectsForUpdate.RemoveAt(i);
-                    _objectsForDraw.Remove(obj);
+                    _objectsForDraw.Remove(dynamicObj);
                     i--;
                 }
             }
@@ -132,9 +154,15 @@ public class Venefica : Game
             if (obj.RectDst.Intersects(_camera.FOV)) _fovObjectsForDraw.Add(obj);
         }
 
+        foreach (var obj in UserInterfaceManager.UserInterfaceElements.Values)
+        {
+            if (obj.IsVisible) obj.Update(deltaTime, _camera);
+        }
+
         CollisionManager.Update(deltaTime, gameTime, _objectsForUpdate);
         _camera.Update(new Vector2(Constants.ScreenWidth, Constants.ScreenHeight), lulu);
 
+        Gum.Update(gameTime);
         base.Update(gameTime);
     }
 
@@ -152,9 +180,10 @@ public class Venefica : Game
             gameObject.Draw(_spriteBatch, _camera.Position);
         }
 
-        _spriteBatch.DrawString(arial14, debugText, Vector2.Zero, Color.YellowGreen);      
+        _spriteBatch.DrawString(arial14, debugText, Vector2.Zero, Color.YellowGreen);
 
         _spriteBatch.End();
+        Gum.Draw();
         base.Draw(gameTime);
     }
 
@@ -165,4 +194,6 @@ public class Venefica : Game
         _graphics.PreferredBackBufferHeight = (int)windowSize.Y;
         _graphics.ApplyChanges();
     }
+
+
 }

@@ -9,4 +9,5 @@ namespace Venefica.Logic.Base.Items;
 internal abstract class Item
 {
     public string Name { get; set; }
+    public string SpriteName { get; set; }
 }

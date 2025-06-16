@@ -30,12 +30,20 @@ internal class Camera
             -target.RectDst.Y + screenSize.Y / 2 - target.RectDst.Height / 2);
     }
 
-    public Vector2 GetCursorePosition()
+    public Vector2 GetCursorePositionWorld()
     {
         Vector2 cursorePosition;
         MouseState _currentMouseState = Mouse.GetState();
         var mousePosition = new Vector2(_currentMouseState.X, _currentMouseState.Y);
         cursorePosition = new Vector2(_currentMouseState.X - (int)Position.X, _currentMouseState.Y - (int)Position.Y);
+        return cursorePosition;
+    }
+
+    public Vector2 GetCursorePositionUI()
+    {
+        Vector2 cursorePosition;
+        MouseState _currentMouseState = Mouse.GetState();
+        cursorePosition = new Vector2(_currentMouseState.X, _currentMouseState.Y);
         return cursorePosition;
     }
 }

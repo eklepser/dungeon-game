@@ -2,22 +2,20 @@
 using Microsoft.Xna.Framework.Content;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Venefica.Logic.Base.Entities;
 using Venefica.Logic.Base.Items.Staffs;
-using Venefica.Logic.Base.Weapons;
-using Venefica.Logic.Graphics;
 
 namespace Venefica.Logic.Base.Items;
 
 internal abstract class Staff : Weapon
 {
+    private Random _random = new();
     public string Type { get; set; }
     public float AttackSpeed { get; set; }
-    public string SpriteName { get; set; }
     public Projectile Projectile { get; set; }
+
+    public float LastShootTime;
+
     public Staff(StaffTemplate template) 
     { 
         Name = template.Name;
@@ -26,13 +24,21 @@ internal abstract class Staff : Weapon
         SpriteName = template.SpriteName;
         Projectile = template.Projectile;
     }
-    virtual public void Shoot(Vector2 direction, ContentManager content, Entity owner, List<GameObjectCollidable> objectsForUpdate, List<GameObject> objectsForDraw) 
+
+    virtual public void Shoot(Vector2 direction, ContentManager content, GameTime gameTime, Entity owner, List<GameObjectCollidable> objectsForUpdate, List<GameObject> objectsForDraw) 
     {
-        Projectile newProjectile = CreateProjectile(Projectile, owner);
-        Vector2 directionNormalized = Vector2.Normalize(direction - owner.PositionPixelsCenter);
-        newProjectile.Velocity = directionNormalized * newProjectile.MoveSpeed;
-        objectsForUpdate.Add(newProjectile);
-        objectsForDraw.Add(newProjectile);
+        float now = (float)gameTime.TotalGameTime.TotalSeconds;
+        if (now - LastShootTime >= (1 / AttackSpeed))
+        {
+            Projectile newProjectile = CreateProjectile(Projectile, owner);
+            Vector2 directionNormalized = Vector2.Normalize(direction - owner.PositionPixelsCenter);
+            Vector2 directionSpreaded = GetSpreadDirection(directionNormalized);
+            newProjectile.Velocity = directionSpreaded * newProjectile.MoveSpeed;
+            objectsForUpdate.Add(newProjectile);
+            objectsForDraw.Add(newProjectile);
+            LastShootTime = now;
+        }
+        else return;    
     }
 
     virtual protected Projectile CreateProjectile(Projectile projectileTemplate, Entity owner)
@@ -43,5 +49,13 @@ internal abstract class Staff : Weapon
         newProjectile.DamageOnTouch = projectileTemplate.DamageOnTouch;
         newProjectile.DamageOnTouchCooldown = 0.2f;
         return newProjectile;
+    }
+
+    private Vector2 GetSpreadDirection(Vector2 direction)
+    {
+        float spreadCoefX = 1 - (_random.Next(3, 20) / 100.0f);
+        float spreadCoefY = 1 - (_random.Next(3, 20) / 100.0f);
+        Vector2 spreadDirection = new(direction.X * spreadCoefX, direction.Y * spreadCoefY);
+        return spreadDirection;
     }
 }

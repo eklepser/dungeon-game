@@ -8,7 +8,7 @@ using Venefica.Logic.Graphics;
 
 namespace Venefica.Logic.Base.Entities;
 
-internal abstract class Entity : GameObjectCollidable
+internal abstract class Entity : GameObjectDynamic
 {
     public string Name { get; protected set; }
     public string Type { get; set; }
@@ -37,21 +37,7 @@ internal abstract class Entity : GameObjectCollidable
 
     public void Shoot(Vector2 direction, ContentManager content, GameObject owner, List<GameObjectCollidable> objectsForUpdate, List<GameObject> objectsForDraw)
     {
-
-        //if (Weapon is not null && Weapon is Staff staff) staff.Shoot();
-
-        //Sprite projSprite = new("projectile1", content);
-        //projSprite.TextureSize = 10;
-        //Projectile proj = new Projectile(projSprite, owner.PositionPixels, 101, owner);
-
-        //Vector2 directionNormalized = Vector2.Normalize(direction - owner.PositionPixels);
-        //proj.Velocity = directionNormalized * proj.MoveSpeed;
-        //proj.DamageOnTouch = 1;
-        //proj.CurrentHealth = 2;
-        //proj.DamageOnTouchCooldown = 0.2f;
-
-        //objectsForUpdate.Add(proj);
-        //objectsForDraw.Add(proj);
+        //if (Weapon is not null && Weapon is Staff staff) staff.Shoot(PositionPixelsCenter, content, this, objectsForUpdate, objectsForDraw);
     }
 }
 
