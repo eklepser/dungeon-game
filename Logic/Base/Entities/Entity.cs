@@ -35,7 +35,7 @@ internal abstract class Entity : GameObjectDynamic
         AnimationSet = template.AnimationSet;
     }
 
-    public void Shoot(Vector2 direction, ContentManager content, GameObject owner, List<GameObjectCollidable> objectsForUpdate, List<GameObject> objectsForDraw)
+    public void Shoot(Vector2 direction, ContentManager content, GameObject owner, List<Chest> objectsForUpdate, List<GameObject> objectsForDraw)
     {
         //if (Weapon is not null && Weapon is Staff staff) staff.Shoot(PositionPixelsCenter, content, this, objectsForUpdate, objectsForDraw);
     }

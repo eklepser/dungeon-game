@@ -6,6 +6,4 @@ using System.Threading.Tasks;
 
 namespace Venefica.Logic.Base.Items;
 
-internal abstract class Weapon : Item
-{
-}
+internal abstract class Weapon : Item {}

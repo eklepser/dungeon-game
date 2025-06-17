@@ -62,17 +62,17 @@ internal static class ControlManager
         {
             if (UserInterfaceManager.UserInterfaceElements.ContainsKey("inventory_menu"))
             {
-                UserInterfaceManager.UserInterfaceElements["inventory_menu"].ChangeVisibility();
+                InventoryMenu menu = (InventoryMenu)UserInterfaceManager.UserInterfaceElements["inventory_menu"];
+                menu.ChangeMenuVisibility();
             }
         }
     }
 
     private static void UpdateMouse(Camera camera, GameTime gameTime)
-    {
-        if (_currentMouseState.LeftButton == ButtonState.Pressed)
+    { 
+        if (_currentMouseState.LeftButton == ButtonState.Pressed) 
         {
-            if (_target.Inventory.Hands[0] is Staff firstStaff) firstStaff.Shoot(camera.GetCursorePositionWorld(), _content, gameTime, _target, _objectsForUpdate, _objectsForDraw);
-            if (_target.Inventory.Hands[1] is Staff secondStaff) secondStaff.Shoot(camera.GetCursorePositionWorld(), _content, gameTime, _target, _objectsForUpdate, _objectsForDraw);
+            _target.Shoot(camera.GetCursorePositionWorld(), _content, gameTime, _objectsForUpdate, _objectsForDraw);
         }
 
         if (MouseClicked(mouse => mouse.RightButton)) _target.PositionPixels = camera.GetCursorePositionWorld();

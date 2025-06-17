@@ -60,31 +60,56 @@ public class Venefica : Game
     protected override void Initialize()
     {
         Gum.Initialize(this);
+        GumService.Default.CanvasWidth = 1280;
+        GumService.Default.CanvasHeight = 720;
         //PauseMenuUI.CreatePauseMenu(Gum);
 
         AnimationManager.LoadAllAnimationSets();
         EntityManager.LoadAllTemplates(Content);
         ItemManager.LoadAllStaffTemplates(Content);
-       
 
-        Staff redStaff = (Staff)ItemManager.Create("red_staff");
+       
         Staff blueStaff = (Staff)ItemManager.Create("blue_staff");
         Staff redStaff1 = (Staff)ItemManager.Create("red_staff");
         Staff blueStaff1 = (Staff)ItemManager.Create("blue_staff");
+        Staff blueStaff2 = (Staff)ItemManager.Create("blue_staff");
 
         InitGraphics(new Vector2(Constants.ScreenWidth, Constants.ScreenHeight));
         arial14 = Content.Load<SpriteFont>("Arial14");
 
         lulu = (Player)EntityManager.Create(new Vector2(100, 100), "player");
-        lulu.Inventory.Hands[0] = redStaff;
-        lulu.Inventory.Hands[1] = blueStaff;
-        lulu.Inventory.Backpack[1] = blueStaff1;
+
+            
+
+        //for (int i = 0; i < 15; i++)
+        //{
+        //    Staff redStaff = (Staff)ItemManager.Create("blue_staff");
+        //    lulu.Inventory.Hands[i] = redStaff;
+        //}
+
+        Staff redStaff = (Staff)ItemManager.Create("red_staff");
+        lulu.Inventory.Hands[0] = blueStaff;
+        lulu.Inventory.Hands[1] = blueStaff1;
+        lulu.Inventory.Backpack[1] = blueStaff2;
         lulu.Inventory.Backpack[2] = redStaff1;
+
         _objectsForDraw.Add(lulu);
         _objectsForUpdate.Add(lulu);
 
         ControlManager.Initialize(lulu, Content, _objectsForUpdate, _objectsForDraw);
         UserInterfaceManager.LoadAllUserInterfaceObjects(Content, Gum, lulu);
+
+
+        Chest chest = new(null, Vector2.Zero, 100, 3);
+        chest.GenerateLoot();
+
+        if (UserInterfaceManager.UserInterfaceElements.ContainsKey("chest_menu"))
+        {
+            ChestMenu cm = (ChestMenu)UserInterfaceManager.UserInterfaceElements["chest_menu"];
+
+            cm.UpdateContent(chest.Loot);
+            foreach (var item in cm._inventory) System.Diagnostics.Debug.WriteLine(item);
+        }
 
         kele = EntityManager.Create(new Vector2(100, 100), "skeleton");
         _objectsForDraw.Add(kele);
@@ -119,13 +144,12 @@ public class Venefica : Game
     {
         ControlManager.Update(_camera, gameTime);
 
-        string inv = "\n";
-        foreach (var item in lulu.Inventory.Hands)
-        {
-            if (item is Staff staff)
-            inv += staff.Name + "   " + staff.Projectile.SpriteName + "\n";
-        }
-
+        //string inv = "\n";
+        //foreach (var item in lulu.Inventory.Hands)
+        //{
+        //    if (item is Staff staff)
+        //    inv += staff.Name + "   " + staff.Projectile.SpriteName + "\n";
+        //}
         //debugText = $"FPS: {FPS}\nStaticObjects: {_objectsForDraw.Count()}\nCollisions: {_objectsForUpdate.Count()}"
         //    + $"\n\nPositionPixel: {lulu.PositionPixels}\nPositionWorld: {lulu.PositionWorld}"
         //    + $"\nCursorPosition: {_camera.GetCursorePositionWorld()} \nFOV: {_camera.FOV}"
@@ -154,12 +178,8 @@ public class Venefica : Game
             if (obj.RectDst.Intersects(_camera.FOV)) _fovObjectsForDraw.Add(obj);
         }
 
-        foreach (var obj in UserInterfaceManager.UserInterfaceElements.Values)
-        {
-            if (obj.IsVisible) obj.Update(deltaTime, _camera);
-        }
-
         CollisionManager.Update(deltaTime, gameTime, _objectsForUpdate);
+        UserInterfaceManager.Update(deltaTime, _camera);
         _camera.Update(new Vector2(Constants.ScreenWidth, Constants.ScreenHeight), lulu);
 
         Gum.Update(gameTime);
@@ -194,6 +214,4 @@ public class Venefica : Game
         _graphics.PreferredBackBufferHeight = (int)windowSize.Y;
         _graphics.ApplyChanges();
     }
-
-
 }

@@ -8,7 +8,7 @@ namespace Venefica.Logic.Physics;
 internal class Grid
 {
     private int cellSize;
-    private Dictionary<Point, List<GameObjectCollidable>> grid = new();
+    private Dictionary<Point, List<Chest>> grid = new();
 
     public Grid(int cellSize)
     {
@@ -20,7 +20,7 @@ internal class Grid
         grid.Clear();
     }
 
-    public void Add(GameObjectCollidable obj)
+    public void Add(Chest obj)
     {
         Rectangle rect = obj.RectHitBoxBig;
 
@@ -36,17 +36,17 @@ internal class Grid
             {
                 Point cell = new(x, y);
                 if (!grid.ContainsKey(cell))
-                    grid[cell] = new List<GameObjectCollidable>();
+                    grid[cell] = new List<Chest>();
 
                 grid[cell].Add(obj);
             }
         }
     }
 
-    public List<GameObjectCollidable> GetNearby(GameObjectCollidable obj)
+    public List<Chest> GetNearby(Chest obj)
     {
         Rectangle rect = obj.RectHitBoxBig;
-        List<GameObjectCollidable> result = new();
+        List<Chest> result = new();
 
         int startX = rect.X / cellSize;
         int endX = (rect.X + rect.Width) / cellSize;

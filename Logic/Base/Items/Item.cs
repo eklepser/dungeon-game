@@ -10,4 +10,5 @@ internal abstract class Item
 {
     public string Name { get; set; }
     public string SpriteName { get; set; }
+    virtual public string Description { get; set; }
 }
