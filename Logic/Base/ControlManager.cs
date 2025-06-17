@@ -1,26 +1,24 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using RenderingLibrary;
 using System;
 using System.Collections.Generic;
 using Venefica.Logic.Base.Entities;
-using Venefica.Logic.Base.Items;
-using Venefica.Logic.UserInterface;
+using Venefica.Logic.UI;
 
 namespace Venefica.Logic.Base;
 
 internal static class ControlManager
-{
+{ 
     private static Player _target;
     private static KeyboardState _currentKeyboardState;
     private static KeyboardState _previousKeyboardState;
-    private static MouseState _currentMouseState;
-    private static MouseState _previousMouseState;
     private static List<GameObjectCollidable> _objectsForUpdate;
     private static List<GameObject> _objectsForDraw;
     private static ContentManager _content;
+
+    public static MouseState _currentMouseState;
+    public static MouseState _previousMouseState;
 
     public static void Initialize(Player target, ContentManager content, List<GameObjectCollidable> objectsForUpdate, List<GameObject> objectsForDraw)
     {
@@ -60,11 +58,7 @@ internal static class ControlManager
 
         if (_currentKeyboardState.IsKeyDown(Keys.Tab) && _previousKeyboardState.IsKeyUp(Keys.Tab))
         {
-            if (UserInterfaceManager.UserInterfaceElements.ContainsKey("inventory_menu"))
-            {
-                InventoryMenu menu = (InventoryMenu)UserInterfaceManager.UserInterfaceElements["inventory_menu"];
-                menu.ChangeMenuVisibility();
-            }
+            UiManager.SwitchVisibility("backpack_menu");
         }
     }
 
@@ -75,14 +69,15 @@ internal static class ControlManager
             _target.Shoot(camera.GetCursorePositionWorld(), _content, gameTime, _objectsForUpdate, _objectsForDraw);
         }
 
-        if (MouseClicked(mouse => mouse.RightButton)) _target.PositionPixels = camera.GetCursorePositionWorld();
+        //if (IsMouseClicked(mouse => mouse.RightButton)) _target.PositionPixels = camera.GetCursorePositionWorld();
+        if (IsMouseClicked(mouse => mouse.RightButton)) _target.Inventory.Backpack[2] = null;
     }
 
-    public static bool MouseClicked(Func<MouseState, ButtonState> getButtonState)
+    public static bool IsMouseClicked(Func<MouseState, ButtonState> getButtonState)
     {
         var current = getButtonState(_currentMouseState);
         var previous = getButtonState(_previousMouseState);
-        _previousMouseState = _currentMouseState;
+        //_previousMouseState = _currentMouseState;
         return current == ButtonState.Pressed && previous == ButtonState.Released;
     }
 }

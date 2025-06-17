@@ -30,4 +30,10 @@ internal class Sprite
     {
         Texture = content.Load<Texture2D>(textureName);
     }
+
+    public Sprite(string textureName, ContentManager content, int textureSize)
+    {
+        Texture = content.Load<Texture2D>(textureName);
+        TextureSize = textureSize;
+    }
 }

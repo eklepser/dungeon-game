@@ -20,6 +20,30 @@
 /processorParam:TextureFormat=Compressed
 /build:Arial14.spritefont
 
+#begin backpack_slot.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:backpack_slot.png
+
+#begin backpack.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:backpack.png
+
 #begin blue_staff.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -43,6 +67,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Dungeon_Tileset.png;tileset1.png
+
+#begin hand_slot.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:hand_slot.png
 
 #begin inventory.png
 /importer:TextureImporter
@@ -115,4 +151,16 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:skeleton.png
+
+#begin slot.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:slot.png
 

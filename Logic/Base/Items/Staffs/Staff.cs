@@ -26,6 +26,7 @@ internal abstract class Staff : Weapon
         Type = template.Type;
         AttackSpeed = template.AttackSpeed;
         SpriteName = template.SpriteName;
+        Sprite = template.Sprite;
         Projectile = template.Projectile;
     }
 

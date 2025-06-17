@@ -57,8 +57,8 @@ internal static class ItemManager
         template.Projectile.Sprite = new(template.Projectile.SpriteName, content);
 
         template.Projectile.Sprite.TextureSize = 10;
-        // Можно загрузить спрайт:
-        // template.Sprite = new Sprite(template.SpriteSheet, content.Load<Texture2D>(template.SpriteSheet));
+
+        template.Sprite = new Sprite(template.SpriteName, content, 32);
 
         return template;
     }

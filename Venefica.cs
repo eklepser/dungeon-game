@@ -1,10 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using MonoGameGum;
 using System.Collections.Generic;
 using System.Linq;
-using System;
 using Venefica.Logic.Base;
 using Venefica.Logic.Graphics;
 using Venefica.Logic.Physics;
@@ -13,12 +10,7 @@ using Venefica.Logic.Base.Tools;
 using Venefica.Logic.Base.Entities;
 using Venefica.Logic.Base.Weapons;
 using Venefica.Logic.Base.Items;
-using Venefica.Logic.UserInterface;
-using MonoGameGum.Forms;
-using MonoGameGum.Forms.Controls.Primitives;
-using MonoGameGum.Forms.DefaultVisuals;
-using MonoGameGum.Forms.DefaultFromFileVisuals;
-using MonoGameGum.Input;
+using Venefica.Logic.UI;
 
 namespace Venefica;
     
@@ -26,8 +18,6 @@ public class Venefica : Game
 {
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
-
-    GumService Gum => GumService.Default;
 
     private List<GameObject> _objectsForDraw = new();
     private List<GameObject> _fovObjectsForDraw = new();
@@ -46,6 +36,7 @@ public class Venefica : Game
     Player lulu;
     Projectile proj;
     SpriteFont arial14;
+    Tooltip tp;
     string debugText;
 
     public Venefica()
@@ -59,20 +50,16 @@ public class Venefica : Game
 
     protected override void Initialize()
     {
-        Gum.Initialize(this);
-        GumService.Default.CanvasWidth = 1280;
-        GumService.Default.CanvasHeight = 720;
-        //PauseMenuUI.CreatePauseMenu(Gum);
-
         AnimationManager.LoadAllAnimationSets();
         EntityManager.LoadAllTemplates(Content);
-        ItemManager.LoadAllStaffTemplates(Content);
+        ItemManager.LoadAllStaffTemplates(Content);    
 
-       
         Staff blueStaff = (Staff)ItemManager.Create("blue_staff");
         Staff redStaff1 = (Staff)ItemManager.Create("red_staff");
         Staff blueStaff1 = (Staff)ItemManager.Create("blue_staff");
         Staff blueStaff2 = (Staff)ItemManager.Create("blue_staff");
+
+        
 
         InitGraphics(new Vector2(Constants.ScreenWidth, Constants.ScreenHeight));
         arial14 = Content.Load<SpriteFont>("Arial14");
@@ -93,23 +80,18 @@ public class Venefica : Game
         lulu.Inventory.Backpack[1] = blueStaff2;
         lulu.Inventory.Backpack[2] = redStaff1;
 
+        UiManager.Initialize(Content, lulu);
+
         _objectsForDraw.Add(lulu);
         _objectsForUpdate.Add(lulu);
 
         ControlManager.Initialize(lulu, Content, _objectsForUpdate, _objectsForDraw);
-        UserInterfaceManager.LoadAllUserInterfaceObjects(Content, Gum, lulu);
-
+        //UserInterfaceManager.LoadAllUserInterfaceObjects(Content, Gum, lulu);
+        tp = new(Content);
 
         Chest chest = new(null, Vector2.Zero, 100, 3);
         chest.GenerateLoot();
 
-        if (UserInterfaceManager.UserInterfaceElements.ContainsKey("chest_menu"))
-        {
-            ChestMenu cm = (ChestMenu)UserInterfaceManager.UserInterfaceElements["chest_menu"];
-
-            cm.UpdateContent(chest.Loot);
-            foreach (var item in cm._inventory) System.Diagnostics.Debug.WriteLine(item);
-        }
 
         kele = EntityManager.Create(new Vector2(100, 100), "skeleton");
         _objectsForDraw.Add(kele);
@@ -142,6 +124,7 @@ public class Venefica : Game
 
     protected override void Update(GameTime gameTime)
     {
+        UiManager.Update(_camera, lulu, deltaTime);
         ControlManager.Update(_camera, gameTime);
 
         //string inv = "\n";
@@ -179,10 +162,8 @@ public class Venefica : Game
         }
 
         CollisionManager.Update(deltaTime, gameTime, _objectsForUpdate);
-        UserInterfaceManager.Update(deltaTime, _camera);
         _camera.Update(new Vector2(Constants.ScreenWidth, Constants.ScreenHeight), lulu);
-
-        Gum.Update(gameTime);
+        
         base.Update(gameTime);
     }
 
@@ -202,14 +183,16 @@ public class Venefica : Game
 
         _spriteBatch.DrawString(arial14, debugText, Vector2.Zero, Color.YellowGreen);
 
+        UiManager.Draw(_spriteBatch);
+        tp.Draw(_spriteBatch);
         _spriteBatch.End();
-        Gum.Draw();
+
         base.Draw(gameTime);
     }
 
     private void InitGraphics(Vector2 windowSize)
     {     
-        _graphics.IsFullScreen = false;
+        _graphics.IsFullScreen = true;
         _graphics.PreferredBackBufferWidth = (int)windowSize.X;
         _graphics.PreferredBackBufferHeight = (int)windowSize.Y;
         _graphics.ApplyChanges();
