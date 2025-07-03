@@ -36,7 +36,6 @@ public class Venefica : Game
     Player lulu;
     Projectile proj;
     SpriteFont arial14;
-    Tooltip tp;
     string debugText;
 
     public Venefica()
@@ -57,16 +56,12 @@ public class Venefica : Game
         Staff blueStaff = (Staff)ItemManager.Create("blue_staff");
         Staff redStaff1 = (Staff)ItemManager.Create("red_staff");
         Staff blueStaff1 = (Staff)ItemManager.Create("blue_staff");
-        Staff blueStaff2 = (Staff)ItemManager.Create("blue_staff");
-
-        
+        Staff blueStaff2 = (Staff)ItemManager.Create("blue_staff");      
 
         InitGraphics(new Vector2(Constants.ScreenWidth, Constants.ScreenHeight));
         arial14 = Content.Load<SpriteFont>("Arial14");
 
-        lulu = (Player)EntityManager.Create(new Vector2(100, 100), "player");
-
-            
+        lulu = (Player)EntityManager.Create(new Vector2(100, 100), "player");  
 
         //for (int i = 0; i < 15; i++)
         //{
@@ -87,7 +82,6 @@ public class Venefica : Game
 
         ControlManager.Initialize(lulu, Content, _objectsForUpdate, _objectsForDraw);
         //UserInterfaceManager.LoadAllUserInterfaceObjects(Content, Gum, lulu);
-        tp = new(Content);
 
         Chest chest = new(null, Vector2.Zero, 100, 3);
         chest.GenerateLoot();
@@ -184,7 +178,6 @@ public class Venefica : Game
         _spriteBatch.DrawString(arial14, debugText, Vector2.Zero, Color.YellowGreen);
 
         UiManager.Draw(_spriteBatch);
-        tp.Draw(_spriteBatch);
         _spriteBatch.End();
 
         base.Draw(gameTime);
@@ -192,7 +185,7 @@ public class Venefica : Game
 
     private void InitGraphics(Vector2 windowSize)
     {     
-        _graphics.IsFullScreen = true;
+        _graphics.IsFullScreen = false;
         _graphics.PreferredBackBufferWidth = (int)windowSize.X;
         _graphics.PreferredBackBufferHeight = (int)windowSize.Y;
         _graphics.ApplyChanges();

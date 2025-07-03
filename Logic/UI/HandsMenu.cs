@@ -1,7 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Graphics.PackedVector;
 using System.Collections.Generic;
 using Venefica.Logic.Base;
 using Venefica.Logic.Base.Items;
@@ -31,11 +30,11 @@ internal class HandsMenu : UiObject
         Sprite slotSprite = new("hand_slot", content, 32);
         for (int i = 0; i < HandsAmount; i++)
         {
-            Slot slot = new(Vector2.Zero, slotSprite, _playerHands[i]);
+            Slot slot = new(content, Vector2.Zero, slotSprite, _playerHands[i]);
             HandSlots[i] = slot;
             _lastAnimTimeList.Add(0);
         }
-        LayourManager.PlaceElements("S", HandSlots);
+        LayoutManager.PlaceElements("S", HandSlots);
     }
 
     public override void Update(Vector2 cursorPosition, Player player, float deltaTime)
@@ -44,17 +43,17 @@ internal class HandsMenu : UiObject
         for (int i = 0; i < _playerHands.Length; i++)
         {
             Slot currentSlot = HandSlots[i];
-            currentSlot.Item = _playerHands[i];
+            currentSlot.Update(_playerHands[i]);
 
             if (currentSlot.RectDst.Contains(cursorPosition))
             {
-                //currentSlot.Alpha = 1;
+                currentSlot.ShowTooltip();
                 if (UiManager.IsMouseClicked(mouse => mouse.LeftButton))
                 {
                     HandleSlotsInteraction(currentSlot, i, UiManager.DraggedSlot);
                 }
             }
-            //else currentSlot.Alpha = 0.4f;
+            else currentSlot.HideTooltip();
         }
     }
 
@@ -63,21 +62,21 @@ internal class HandsMenu : UiObject
         if ((currentSlot.Item != null) && (draggedSlot.Item == null))
         {
             UiManager.SaveSlot(_playerHands, currentSlotIndex);
-            draggedSlot.Item = currentSlot.Item;
+            draggedSlot.Update(currentSlot.Item);
             _playerHands[currentSlotIndex] = null;
         }
 
         else if ((currentSlot.Item == null) && (draggedSlot.Item != null))
         {
             _playerHands[currentSlotIndex] = draggedSlot.Item;
-            draggedSlot.Item = null;
+            draggedSlot.Update(null);
         }
 
         else if ((currentSlot.Item != null) && (draggedSlot.Item != null))
         {
             UiManager.SavedArray[UiManager.SavedArrayIndex] = _playerHands[currentSlotIndex];
             _playerHands[currentSlotIndex] = draggedSlot.Item;
-            draggedSlot.Item = null;
+            draggedSlot.Update(null);
         }
     }
 

@@ -24,10 +24,10 @@ internal class BackpackMenu : UiObject
         Sprite slotSprite = new("backpack_slot", content, 32);
         for (int i = 0; i < BackpackSize; i++)
         {
-            Slot slot = new(Vector2.Zero, slotSprite, _playerBackpack[i]);
+            Slot slot = new(content, Vector2.Zero, slotSprite, _playerBackpack[i]);
             BackpackSlots[i] = slot;
         }  
-        LayourManager.PlaceElements("W", BackpackSlots);
+        LayoutManager.PlaceElements("W", BackpackSlots);
     }
 
     public override void Update(Vector2 cursorPosition, Player player, float deltaTime)
@@ -35,17 +35,22 @@ internal class BackpackMenu : UiObject
         for (int i = 0; i < _playerBackpack.Length; i++)
         {
             Slot currentSlot = BackpackSlots[i];
-            currentSlot.Item = _playerBackpack[i];
+            currentSlot.Update(_playerBackpack[i]);
 
             if (currentSlot.RectDst.Contains(cursorPosition))
             {
+                currentSlot.ShowTooltip();
                 currentSlot.Alpha = 1;
                 if (UiManager.IsMouseClicked(mouse => mouse.LeftButton))
                 {
                     HandleSlotsInteraction(currentSlot, i, UiManager.DraggedSlot);
-                }             
+                }
             }
-            else currentSlot.Alpha = 0.2f;
+            else
+            {
+                currentSlot.Alpha = 0.2f;
+                currentSlot.HideTooltip();
+            }
         }
     }
 
@@ -54,21 +59,21 @@ internal class BackpackMenu : UiObject
         if ((currentSlot.Item != null) && (draggedSlot.Item == null))
         {
             UiManager.SaveSlot(_playerBackpack, currentSlotIndex);
-            draggedSlot.Item = currentSlot.Item;
+            draggedSlot.Update(currentSlot.Item);
             _playerBackpack[currentSlotIndex] = null;
         }
 
         else if ((currentSlot.Item == null) && (draggedSlot.Item != null))
         {
             _playerBackpack[currentSlotIndex] = draggedSlot.Item;
-            draggedSlot.Item = null;
+            draggedSlot.Update(null);
         }
 
         else if ((currentSlot.Item != null) && (draggedSlot.Item != null))
         {
             UiManager.SavedArray[UiManager.SavedArrayIndex] = _playerBackpack[currentSlotIndex];
             _playerBackpack[currentSlotIndex] = draggedSlot.Item;
-            draggedSlot.Item = null;
+            draggedSlot.Update(null);
         }
     }
 

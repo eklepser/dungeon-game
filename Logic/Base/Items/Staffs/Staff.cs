@@ -15,10 +15,6 @@ internal abstract class Staff : Weapon
     public Projectile Projectile { get; set; }
 
     public float LastShootTime;
-    public override string Description 
-    { 
-        get => $"{Name}\nDamage:{Projectile.DamageOnTouch}\nAttackSpeed: {AttackSpeed}\nProjectileSize: {Projectile.RectHitBoxBig.Width}"; 
-    }
 
     public Staff(StaffTemplate template) 
     { 
@@ -28,6 +24,9 @@ internal abstract class Staff : Weapon
         SpriteName = template.SpriteName;
         Sprite = template.Sprite;
         Projectile = template.Projectile;
+
+        Description.Add(SpriteName);
+        Description.Add(AttackSpeed.ToString());
     }
 
     virtual public void Shoot(Vector2 direction, ContentManager content, GameTime gameTime, Entity owner, List<GameObjectCollidable> objectsForUpdate, List<GameObject> objectsForDraw) 

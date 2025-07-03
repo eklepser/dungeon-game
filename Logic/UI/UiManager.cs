@@ -25,7 +25,7 @@ internal static class UiManager
     public static void Initialize(ContentManager content, Player player)
     {
 
-        DraggedSlot = new(Vector2.Zero, new("slot", content, 32), null);
+        DraggedSlot = new(content, Vector2.Zero, new("slot", content, 32), null);
         DraggedSlot.Alpha = 0;
 
         BackpackMenu bpMenu = new(content, player);
@@ -75,6 +75,14 @@ internal static class UiManager
     private static void DraggedSlotUpdate(Vector2 cursorPosition)
     {
         DraggedSlot.Position = cursorPosition;
+        if (DraggedSlot.Item != null )
+        {
+            DraggedSlot.ShowTooltip();
+        }
+        else DraggedSlot.HideTooltip();
+
+        Vector2 offset = new(0, -DraggedSlot.RectDst.Height);
+        DraggedSlot.PlaceTooltip(DraggedSlot.Position + offset);
     }
 
     public static void SetVisibility(string uiElementName, bool isEnabled)
