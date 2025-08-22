@@ -63,12 +63,6 @@ public class Venefica : Game
 
         lulu = (Player)EntityManager.Create(new Vector2(100, 100), "player");  
 
-        //for (int i = 0; i < 15; i++)
-        //{
-        //    Staff redStaff = (Staff)ItemManager.Create("blue_staff");
-        //    lulu.Inventory.Hands[i] = redStaff;
-        //}
-
         Staff redStaff = (Staff)ItemManager.Create("red_staff");
         lulu.Inventory.Hands[0] = blueStaff;
         lulu.Inventory.Hands[1] = blueStaff1;
@@ -81,7 +75,6 @@ public class Venefica : Game
         _objectsForUpdate.Add(lulu);
 
         ControlManager.Initialize(lulu, Content, _objectsForUpdate, _objectsForDraw);
-        //UserInterfaceManager.LoadAllUserInterfaceObjects(Content, Gum, lulu);
 
         Chest chest = new(null, Vector2.Zero, 100, 3);
         chest.GenerateLoot();
@@ -120,18 +113,6 @@ public class Venefica : Game
     {
         UiManager.Update(_camera, lulu, deltaTime);
         ControlManager.Update(_camera, gameTime);
-
-        //string inv = "\n";
-        //foreach (var item in lulu.Inventory.Hands)
-        //{
-        //    if (item is Staff staff)
-        //    inv += staff.Name + "   " + staff.Projectile.SpriteName + "\n";
-        //}
-        //debugText = $"FPS: {FPS}\nStaticObjects: {_objectsForDraw.Count()}\nCollisions: {_objectsForUpdate.Count()}"
-        //    + $"\n\nPositionPixel: {lulu.PositionPixels}\nPositionWorld: {lulu.PositionWorld}"
-        //    + $"\nCursorPosition: {_camera.GetCursorePositionWorld()} \nFOV: {_camera.FOV}"
-        //    + $"\n\nVelocity {new Vector2((float)Math.Round(lulu.Velocity.X, 3), (float)Math.Round(lulu.Velocity.Y, 3))}"
-        //    + $"\nInventory: " + inv;
 
         debugText = $"FPS: {FPS}";
         for (int i = 0; i < _objectsForUpdate.Count; i++)
