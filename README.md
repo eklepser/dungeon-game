@@ -9,3 +9,7 @@ The test build includes core systems such as:
 - Player movement with collision detection
 - Weapon and shooting mechanics
 - Interactive environment and obstacles
+
+## 📦 Releases
+
+Download the latest release here: [Releases](https://github.com/eklepser/dungeon-game/releases)
