@@ -1,12 +1,8 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
+﻿using Microsoft.Xna.Framework.Content;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Reflection.Metadata;
-using Venefica.Logic.Base.Entities;
 using Venefica.Logic.Base.Items;
 using Venefica.Logic.Base.Items.Staffs;
 using Venefica.Logic.Graphics;
@@ -15,7 +11,7 @@ namespace Venefica.Logic.Base.Weapons;
 
 internal static class ItemManager
 {
-    private const string _folderPath = "../../../Templates/Items";
+    private static readonly string _folderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Templates", "Items");
     private static Dictionary<string, StaffTemplate> _staffTemplates = new();
 
     public static Item Create(string staffName)

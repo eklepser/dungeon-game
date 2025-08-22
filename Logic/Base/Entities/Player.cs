@@ -1,8 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
-using RenderingLibrary;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using Venefica.Logic.Base.Entities;
 using Venefica.Logic.Base.InventoryLogic;
 using Venefica.Logic.Base.Items;
@@ -12,7 +10,6 @@ namespace Venefica.Logic.Base;
 
 internal class Player : Entity
 {
-    //public List<Item> Inventory = new();
     public PlayerInventory Inventory;
     public Player(Sprite sprite, Vector2 position, int layer, EntityTemplate template) : base(sprite, position, layer, template) 
     {

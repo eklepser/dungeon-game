@@ -1,5 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
@@ -12,7 +11,7 @@ namespace Venefica.Logic.World;
 internal class Room
 {
     private string _preset;
-    private string _root = "../../../World/Level1/";
+    private static readonly string _root = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "World", "Level1\\");
     private Texture2D _tileMap;
     public List<int> AvailableDirections;
     public Vector2 PositionWorld { get; set; }
@@ -198,13 +197,6 @@ internal class Room
     }
 
     private void RemoveTile(Vector2 tilePosition)
-    {
-        MidGround.Remove(tilePosition);
-        ForeGround.Remove(tilePosition);
-        Collisions.Remove(tilePosition);
-    }
-
-    private void ReplaceTile(Vector2 tilePosition)
     {
         MidGround.Remove(tilePosition);
         ForeGround.Remove(tilePosition);

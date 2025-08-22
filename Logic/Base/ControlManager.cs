@@ -68,8 +68,6 @@ internal static class ControlManager
         {
             _target.Shoot(camera.GetCursorePositionWorld(), _content, gameTime, _objectsForUpdate, _objectsForDraw);
         }
-
-        //if (IsMouseClicked(mouse => mouse.RightButton)) _target.PositionPixels = camera.GetCursorePositionWorld();
         if (IsMouseClicked(mouse => mouse.RightButton)) _target.Inventory.Backpack[2] = null;
     }
 
@@ -77,7 +75,6 @@ internal static class ControlManager
     {
         var current = getButtonState(_currentMouseState);
         var previous = getButtonState(_previousMouseState);
-        //_previousMouseState = _currentMouseState;
         return current == ButtonState.Pressed && previous == ButtonState.Released;
     }
 }

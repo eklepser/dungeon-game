@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Reflection.Metadata;
-using Venefica.Logic.Base.Items;
+﻿using Venefica.Logic.Base.Items;
 
 namespace Venefica.Logic.Base.InventoryLogic;
 

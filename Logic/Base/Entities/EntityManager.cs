@@ -11,7 +11,7 @@ namespace Venefica.Logic.Base.Entities;
 
 internal static class EntityManager
 {
-    private const string _folderPath = "../../../Templates/Entities";
+    private static readonly string _folderPath = Path.Combine(AppContext.BaseDirectory, "Templates", "Entities");
     private static Dictionary<string, EntityTemplate> _templates = new();
 
     public static Entity Create(Vector2 position, string enemyName)

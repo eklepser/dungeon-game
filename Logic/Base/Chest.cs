@@ -1,5 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using System.Collections.Generic;
 using Venefica.Logic.Base.Items;
 using Venefica.Logic.Base.Weapons;
 using Venefica.Logic.Graphics;

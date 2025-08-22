@@ -1,6 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using System;
-using Venefica.Logic.Base;
 using Venefica.Logic.Graphics;
 
 namespace Venefica.Logic.Base.Items;

@@ -1,8 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
 using System.Collections.Generic;
-using System.Reflection.Metadata;
-using Venefica.Logic.Base.Weapons;
 using Venefica.Logic.Graphics;
 
 namespace Venefica.Logic.Base;

@@ -1,7 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Venefica.Logic.Graphics;
 
-
 namespace Venefica.Logic.Base;
 
 internal class Obstacle : GameObjectCollidable

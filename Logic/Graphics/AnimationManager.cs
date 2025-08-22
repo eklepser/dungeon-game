@@ -8,7 +8,7 @@ namespace Venefica.Logic.Graphics;
 
 internal static class AnimationManager
 {
-    private const string _folderPath = "../../../Animations";
+    private static readonly string _folderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Animations");
     private static Dictionary<string, Dictionary<string, Animation>> _allAnimationSets = new();
 
     public static Dictionary<string, Animation> GetAnimationSet(string animationSetName)
