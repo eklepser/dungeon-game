@@ -68,7 +68,6 @@ internal static class ControlManager
         {
             _target.Shoot(camera.GetCursorePositionWorld(), _content, gameTime, _objectsForUpdate, _objectsForDraw);
         }
-        if (IsMouseClicked(mouse => mouse.RightButton)) _target.Inventory.Backpack[2] = null;
     }
 
     public static bool IsMouseClicked(Func<MouseState, ButtonState> getButtonState)
