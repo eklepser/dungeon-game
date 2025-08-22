@@ -3,6 +3,24 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
+# Visual Studio Code
+.vscode/
+
+# Config folders
+.config/
+
+# Build outputs (если есть)
+bin/
+obj/
+out/
+dist/
+
+# User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
 # User-specific files
 *.rsuser
 *.suo
